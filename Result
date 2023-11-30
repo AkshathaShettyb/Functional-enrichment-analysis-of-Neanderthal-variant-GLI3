@@ -29,3 +29,12 @@ of these genes across evolutionary lineages, indicating their significance in bi
 processes. The involvement of these genes in essential cellular functions such as immune 
 response and protein degradation underscores their importance in maintaining cellular 
 homeostasis and suggests their potential role in natural selection during the course of evolution.
+
+
+Number of upregulated and downregulated genes used for enrichment analysis
+Groups        upregulated     downregulated
+GLI3C &GLI3T  587             16448
+GLI3C         543             16605
+GLI3T         543             16605
+GLI3T vs GLI3C 4422           26625
+HEK           395             16753
