@@ -1,0 +1,144 @@
+# Differential Gene expression Analysis by DESeq2 Bioconductor Package
+
+#load libraries
+library(DESeq2)
+library(tidyverse)
+library(dplyr)
+library(ggplot2)
+
+#set directory
+#dir.create("d:/DATA ANALYSIS/Main/")
+setwd("d:/cytoscape/")
+#list.files("d:/DATA ANALYSIS/Main/")
+
+#read in the files
+
+countsdata <- read.csv("countsfile.csv", sep = "," , row.names = 1 ,header = T)
+head(countsdata , 2)
+
+metadata <- read.csv("metadata1.csv",sep = ",",row.names = 1,header = T)
+head(metadata)
+
+#extracting coloumns from meta data
+metadata$Groups<- factor(metadata$Groups)
+metadata$Replicates <- factor(metadata$Replicates)
+
+
+#check coldata of metadata == rowdata of counts data
+all(colnames(countsdata) %in% rownames(metadata))
+
+#check if the rownames and colnames are in same order
+all(colnames(countsdata) == rownames(metadata))
+#if false
+#countdata <- countdata[, rownames(coldata)]
+
+# construct deseq dataset
+dds <- DESeqDataSetFromMatrix(countData = countsdata,
+                              colData = metadata,
+                              design = ~Groups)
+dds
+
+#set factor level
+dds$Groups <- relevel(dds$Groups ,ref = "HEK")
+
+#run deseq
+dds <- DESeq(dds)
+
+#results 
+result <- results(dds)
+resultsNames(dds)
+summary(result)
+result
+res<- na.omit(result)
+res
+
+#results of TWO DIFFERENT LEVELS IN THE DESIGN FACTOR
+#---------GLI3C---------------
+
+res_C <-results(dds , contrast = c("Groups" , "GLI3C" , "HEK"))
+res_C <-na.omit(res_C)
+res_C
+
+#--------GLI3T---------------
+
+res_T <- results(dds , contrast = c("Groups" , "GLI3T" , "HEK"))
+res_T <-na.omit(res_T)
+res_T
+
+#Log fold change shrinkage for better visualization and ranking
+#BiocManager::install("apeglm")
+resLFC <- lfcShrink(dds, coef = "Groups_GLI3C_vs_HEK" ,type = "apeglm") %>% na.omit()
+resLFC
+
+# adjusted p-value 
+summary(result)
+#order by smallest p value
+resOrdered <- result[order(res$pvalue),]
+
+#to check adj-pvalue less than 0.1
+sum(res$padj < 0.1)
+
+#setting adj p value to 0.5
+res0.05<-results(dds,alpha=0.05) %>% na.omit()
+summary(res0.05)
+sum(res$padj < 0.05)
+
+dir.create("d:/DATA ANALYSIS/Main/Results5")
+list.files("d:/DATA ANALYSIS/Main/")
+setwd("d:/DATA ANALYSIS/Main/Results5/")
+write.csv(res0.05 , file = "result.csv")
+results = read.csv("result_2.csv") %>% view()
+
+#----------------------------------------------------------------------------------
+#upregulated
+upregulated <- sum(res$log2FoldChange > 2.5) 
+upregulated
+
+upregulated <- subset(res, res$log2FoldChange >2.5)
+write.csv(upregulated , file = "upregulated1.csv")
+upreg<-read.csv("upregulated1.csv")
+view(upreg)
+
+#downregulated
+downregulated <- sum(res$log2FoldChange < -2.5) 
+downregulated
+downregulated2 <-subset(res ,res$log2FoldChange < -2.5)
+write.csv(downregulated2 ,file = "downregulated.csv")
+downreg <- read.csv("downregulated.csv")
+view(downreg)
+
+#-------------------------VISUALISATION--------------------------------------------------------
+#MA PLOT
+plotMA(res0.05)
+#plotMA(resLFC)
+
+#PCA PLOT
+library(ggplot2)
+
+ddsMAT_rlog <- rlog(dds)
+
+pcaplot <-plotPCA(ddsMAT_rlog , intgroup = "Groups" , ntop = 500)+
+                  theme_gray() +
+                  geom_point(position=position_jitter(w=0.1,h=0) , size = 3)+
+                  scale_y_continuous(limits = c(-5, 5))+
+                  ggtitle(label = "Principal Component Analysis (PCA)",
+                  subtitle = "Top 500 most variable genes") 
+pcaplot
+
+#-----------------------------------------------------------------------------------------------
+# heat map
+library("RColorBrewer")
+library(pheatmap)
+mat <- assay(ddsMAT_rlog[row.names(resLFC)])[1:30, ]
+mat
+
+df<-as.data.frame(colData(dds)[,c("Groups","Replicates")])
+
+pheatmap(mat = mat,
+         color = colorRampPalette(brewer.pal(9 , "PuOr"))(255),
+         scale = "row",
+         annotation_col = df,
+         fontsize = 6,
+         cellwidth = ,)
+
+dev.off()
