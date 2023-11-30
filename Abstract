@@ -1,0 +1,85 @@
+1.Introduction
+Genomic structural changes play a crucial role in shaping unique human traits. Understanding 
+how lineage-specific genetic variations impact phenotypic transformations during human 
+evolution has been challenging. To explore the phenotypic differences between modern 
+humans and Neanderthals , this project investigates a specific Neanderthal variant of the GLI3 
+gene by RNA sequencing analysis. All sequenced Neanderthal carry a Arginine to Cysteine 
+Functional enrichment analysis is done to study the differentially expressed genes .This study 
+hopes to explore different lineage specific traits that are the results of genetic variations and 
+provide plausible explanations for the evolution ,variations and similarities found between the 
+two species .
+
+3.OBJECTIVE
+The objective of this study was to conduct a comparative analysis of gene expression patterns 
+between Neanderthal variant substitution genes and the overexpressed modern type GLI3 gene 
+in GLI3-dependent HEK293T cells.
+• The study aimed to investigate the phenotypic observations resulting from the 
+differential gene expression and compare them with the gene expression profile of the 
+modern GLI3 gene in HEK293T cells.
+• The primary objective was to identify potential functional differences and phenotypic 
+implications associated with the Neanderthal variant substitution genes compared to the 
+modern GLI3 gene in the context of GLI3-dependent cellular processes.
+
+
+3.Methodology and tools used 
+
+3.1.RAW SEQUENCE 
+The paired-end sequences associated with the PRJDB14207 ID were downloaded from the 
+ENA database.. The ENA serves as a comprehensive repository for nucleotide sequence data 
+and is widely used for storing and sharing genomic datasets. Total of 9 samples were retrieved
+from this data base.( PRJDB14207 - SRA - NCBI (nih.gov))
+
+3.2. QUALITY CONTROL ASSESSMENT USING FASTQC AND MULTIQC
+FastQC, a widely adopted tool for quality control analysis of high-throughput sequencing data, 
+was employed to assess the quality characteristics of the downloaded sequences. FastQC 
+provides comprehensive metrics, including per-base sequence quality scores, sequence length 
+distribution, adapter content, and identification of overrepresented sequences. The generated 
+output files were saved in HTML format for subsequent analysis and visualization.
+To streamline the quality control process and facilitate comprehensive data interpretation, 
+MultiQC was utilized to generate an integrated quality control report. MultiQC aggregates the 
+outputs of multiple tools, including FastQC, into a single report, simplifying the evaluation and 
+comparison of quality metrics across multiple samples. The resulting report offered an 
+overview of the sequence quality metrics and aided in the identification of potential biases and 
+issues.
+samples Groups Replicates
+DRR420580 HEK Rep1
+DRR420581 HEK Rep2
+DRR420582 HEK Rep3
+DRR420583 GLI3C Rep1
+DRR420584 GLI3C Rep2
+DRR420585 GLI3C Rep3
+DRR420586 GLI3T Rep1
+DRR420587 GLI3T Rep2
+DRR420588 GLI3T Rep3
+
+3.3. ALIGNMENT 
+HISAT, a widely employed alignment tool, was utilized to map the paired-end sequences to 
+the GRCh38 (HG38) reference genome. HISAT employed an indexing scheme to enhance the 
+alignment speed and accuracy.
+
+3.4. FEATURE COUNTS ANALYSIS
+Subread is a widely used tool that enables precise and efficient gene quantification by aligning 
+sequencing reads to a reference genome and assigning them to gene features. We employed 
+Subread for transcript count analysis, leveraging its capabilities to accurately quantify gene 
+expression levels. The obtained transcript counts were utilized for differential gene expression
+analysis using DESeq2. This analysis facilitated the identification of genes that exhibited 
+significant differential expression between experimental conditions or biological groups.
+
+3.5. DIFFERENTIAL GENE EXPRESSION ANALYSIS 
+Differential gene expression analysis used for the identification of genes that exhibit significant 
+expression changes between different experimental conditions. We utilized DESeq2 ,a 
+Bioconductor package to identify differentially expressed genes. The dataset used for 
+differential gene expression analysis consisted of gene expression data from three experimental 
+groups: HEK, GLI3C, and GLI3T. Four distinct comparisons were performed: 
+(1) HEK vs. GLI3C and GLI3T
+(2) HEK vs. GLI3C 
+(3) HEK vs. GLI3T
+(4) GLI3C vs. GLI3T
+
+3.6. FUNCTIONAL ENRICHMENT ANALYSIS USING DAVID
+DAVID (Database for Annotation, Visualization, and Integrated Discovery) is a widely used 
+online tool for functional enrichment analysis. We employed DAVID to perform functional 
+enrichment analysis of the differentially expressed genes, focusing on the identification of 
+enriched KEGG pathways.
+
+
